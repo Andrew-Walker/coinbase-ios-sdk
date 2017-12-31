@@ -20,18 +20,23 @@ static NSURL * __strong baseURL;
 
 + (CoinbaseOAuthAuthenticationMechanism)startOAuthAuthenticationWithClientId:(NSString *)clientId
                                                                        scope:(NSString *)scope
+                                                               selectAccount:(BOOL)selectAccount
                                                                  redirectUri:(NSString *)redirectUri
                                                                         meta:(NSDictionary *)meta {
-    return [CoinbaseOAuth startOAuthAuthenticationWithClientId:clientId scope:scope redirectUri:redirectUri meta:meta layout:nil];
+    return [CoinbaseOAuth startOAuthAuthenticationWithClientId:clientId scope:scope selectAccount:selectAccount redirectUri:redirectUri meta:meta layout:nil];
 }
-
-
+    
+    
 + (CoinbaseOAuthAuthenticationMechanism)startOAuthAuthenticationWithClientId:(NSString *)clientId
                                                                        scope:(NSString *)scope
+                                                               selectAccount:(BOOL)selectAccount
                                                                  redirectUri:(NSString *)redirectUri
                                                                         meta:(NSDictionary *)meta
                                                                       layout:(NSString *)layout {
     NSString *path = [NSString stringWithFormat: @"/oauth/authorize?response_type=code&client_id=%@", clientId];
+    if (!selectAccount) {
+        path = [path stringByAppendingFormat:@"&account=all"];
+    }
     if (scope) {
         path = [path stringByAppendingFormat:@"&scope=%@", [self URLEncodedStringFromString:scope]];
     }
@@ -46,7 +51,7 @@ static NSURL * __strong baseURL;
     if (layout) {
         path = [path stringByAppendingFormat:@"&layout=%@", [self URLEncodedStringFromString:layout]];
     }
-
+    
     CoinbaseOAuthAuthenticationMechanism mechanism = CoinbaseOAuthMechanismNone;
     NSURL *coinbaseAppUrl = [NSURL URLWithString:[NSString stringWithFormat:@"com.coinbase.oauth-authorize:%@", path]];
     BOOL appSwitchSuccessful = NO;
@@ -56,7 +61,7 @@ static NSURL * __strong baseURL;
             mechanism = CoinbaseOAuthMechanismApp;
         }
     }
-
+    
     if (!appSwitchSuccessful) {
         NSURL *base = [NSURL URLWithString:path relativeToURL:(baseURL == nil ? [NSURL URLWithString:@"https://www.coinbase.com/"] : baseURL)];
         NSURL *webUrl = [[NSURL URLWithString:path relativeToURL:base] absoluteURL];
@@ -65,7 +70,7 @@ static NSURL * __strong baseURL;
             mechanism = CoinbaseOAuthMechanismBrowser;
         }
     }
-
+    
     return mechanism;
 }
 

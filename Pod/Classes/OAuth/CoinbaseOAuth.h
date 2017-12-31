@@ -37,15 +37,17 @@ NS_EXTENSION_UNAVAILABLE_IOS("OAuth is currently not allowed in extensions")
 /// @return the mechanism of authentication. Example: CoinbaseOAuthMechanismApp
 + (CoinbaseOAuthAuthenticationMechanism)startOAuthAuthenticationWithClientId:(NSString *)clientId
                                                                        scope:(NSString *)scope
+                                                               selectAccount:(BOOL)selectAccount
                                                                  redirectUri:(NSString *)redirectUri
                                                                         meta:(NSDictionary *)meta;
-
+    
 /// Start the OAuth authentication process. This will open a different application to complete the
 /// authentication flow.
 ///
 /// @return the mechanism of authentication. Example: CoinbaseOAuthMechanismApp
 + (CoinbaseOAuthAuthenticationMechanism)startOAuthAuthenticationWithClientId:(NSString *)clientId
                                                                        scope:(NSString *)scope
+                                                               selectAccount:(BOOL)selectAccount
                                                                  redirectUri:(NSString *)redirectUri
                                                                         meta:(NSDictionary *)meta
                                                                       layout:(NSString *)layout;
